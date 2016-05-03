@@ -1,0 +1,29 @@
+{
+  "name": "chai-image-assert",
+  "version": "1.0.0",
+  "description": "Image comparison chai assert (uses ImageMagick).",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "mocha test/*.spec.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/diosmosis/chai-image-assert.git"
+  },
+  "keywords": [
+    "chai",
+    "imagemagick",
+    "image",
+    "comparison"
+  ],
+  "author": "diosmosis",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/diosmosis/chai-image-assert/issues"
+  },
+  "homepage": "https://github.com/diosmosis/chai-image-assert#readme",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^2.4.5"
+  }
+}
