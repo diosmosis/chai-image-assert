@@ -1,6 +1,6 @@
 {
   "name": "chai-image-assert",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Image comparison chai assert (uses ImageMagick).",
   "main": "lib/index.js",
   "scripts": {
