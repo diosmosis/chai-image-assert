@@ -33,4 +33,13 @@ describe('matchImage', function () {
             expect(louise).to.matchImage('louise');
         }).to.throw(Error, "the 'garbagecompare' command was not found, make sure imagemagick is available on your machine");
     });
+
+    it("should use a custom name for the processed screenshot if supplied", function () {
+      expect(louise).to.matchImage('louise', 'louise.clone');
+
+      var pathToLouiseClone = path.join(__dirname, 'processed-screenshots', 'louise.clone.png');
+      var stat = fs.statSync(pathToLouiseClone);
+
+      expect(stat.isFile()).to.be.true;
+    })
 });
