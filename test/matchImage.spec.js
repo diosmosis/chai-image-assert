@@ -5,7 +5,7 @@ import * as chai from 'chai';
 const expect = chai.expect;
 
 describe('matchImage', function () {
-    var louise = fs.readFileSync(path.join(__dirname, 'expected-screenshots', 'louise.png')),
+    const louise = fs.readFileSync(path.join(__dirname, 'expected-screenshots', 'louise.png')),
         tina = fs.readFileSync(path.join(__dirname, 'expected-screenshots', 'tina.png')),
         gene = fs.readFileSync(path.join(__dirname, 'expected-screenshots', 'gene.png'));
 
@@ -38,8 +38,8 @@ describe('matchImage', function () {
     it("should use a custom name for the processed screenshot if supplied", function () {
       expect(louise).to.matchImage('louise', 'louise.clone');
 
-      var pathToLouiseClone = path.join(__dirname, 'processed-screenshots', 'louise.clone.png');
-      var stat = fs.statSync(pathToLouiseClone);
+      const pathToLouiseClone = path.join(__dirname, 'processed-screenshots', 'louise.clone.png');
+      const stat = fs.statSync(pathToLouiseClone);
 
       expect(stat.isFile()).to.be.true;
     })

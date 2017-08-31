@@ -1,0 +1,17 @@
+#!/usr/bin/env node
+const path = require('path');
+const serve = require('serve');
+const openBrowser = require('react-dev-utils/openBrowser');
+
+const viewerPath = path.join(__dirname, '..', 'dist', 'viewer');
+
+const argv = require('minimist')(process.argv.slice(2));
+const port = parseInt(argv.port) || 3000;
+
+console.log(`Launching viewer on ${port}...`);
+serve(viewerPath, {
+  port,
+});
+
+// can't tell if serve is done, so wait a bit
+setTimeout(() => openBrowser(`http://localhost:${port}`), 2000);
