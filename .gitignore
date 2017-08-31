@@ -34,4 +34,4 @@ node_modules
 
 .DS_Store
 /test/processed-screenshots
-
+/dist/
