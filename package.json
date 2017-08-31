@@ -32,6 +32,7 @@
   },
   "homepage": "https://github.com/diosmosis/chai-image-assert#readme",
   "devDependencies": {
+    "axios": "^0.16.2",
     "babel": "^6.23.0",
     "babel-cli": "^6.26.0",
     "babel-polyfill": "^6.26.0",
@@ -44,7 +45,8 @@
     "react-scripts": "1.0.12"
   },
   "dependencies": {
-    "react-dev-utils": "^4.0.0",
-    "serve": "^6.0.6"
+    "fs-extra": "^4.0.1",
+    "koa-bodyparser": "3",
+    "react-dev-utils": "^4.0.0"
   }
 }

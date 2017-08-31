@@ -1,17 +1,20 @@
 #!/usr/bin/env node
 const path = require('path');
-const serve = require('serve');
 const openBrowser = require('react-dev-utils/openBrowser');
-
-const viewerPath = path.join(__dirname, '..', 'dist', 'viewer');
+const viewerApi = require('../viewer/api');
 
 const argv = require('minimist')(process.argv.slice(2));
 const port = parseInt(argv.port) || 3000;
 
-console.log(`Launching viewer on ${port}...`);
-serve(viewerPath, {
-  port,
-});
+const screenshotDirs = argv._[0];
+if (!screenshotDirs) {
+  throw new Error('The first argument to the directory where screenshots are stored is required.');
+}
 
-// can't tell if serve is done, so wait a bit
-setTimeout(() => openBrowser(`http://localhost:${port}`), 2000);
+console.log(`Launching viewer on ${port}...`);
+viewerApi({
+  port,
+  screenshotDirs,
+}).then(function () {
+  openBrowser(`http://localhost:${port}`);
+});
