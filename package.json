@@ -9,7 +9,7 @@
   "scripts": {
     "test": "mocha --require babel-polyfill --compilers js:babel-register test/*.spec.js",
     "build": "rm -r dist && babel ./lib --out-dir dist && npm run viewer-build",
-    "prepublish": "npm run build",
+    "prepublish": "in-publish && npm run build",
     "viewer-start": "cd viewer/frontend && react-scripts start",
     "viewer-build": "mkdir -p ./dist && cd viewer/frontend && react-scripts build && mv ./build ../../dist/viewer",
     "viewer-test": "cd viewer/frontend && react-scripts test --env=jsdom",
@@ -39,6 +39,8 @@
     "babel-preset-env": "^1.6.0",
     "babel-register": "^6.26.0",
     "chai": "^3.5.0",
+    "immutability-helper": "^2.3.1",
+    "in-publish": "^2.0.0",
     "mocha": "^2.4.5",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",

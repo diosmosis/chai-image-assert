@@ -26,6 +26,7 @@ module.exports = function (options) {
   app.use(koaStatic(viewerPath));
 
   app.use(koaRoute.post('/copy', copyFile));
+  app.use(koaRoute.get('/comparisons', getComparisonList));
   app.use(koaRoute.get('/files/processed', getFiles(processedFolderName)));
   app.use(koaRoute.get('/files/expected', getFiles(expectedFolderName)));
 
@@ -79,6 +80,17 @@ module.exports = function (options) {
     fs.linkSync(copyFrom, copyTo);
 
     ctx.status = 204;
+  }
+
+  function getComparisonList(ctx) {
+    return fs.readdir(path.join(screenshotDirs, processedFolderName))
+      .then(function (files) {
+        // TODO: don't know how to tell if a file is matched against an existing expected file.
+        ctx.body = files
+          .filter(fileName => /\.png$/.test(fileName))
+          .filter(fileName => !/\.diff\.png/.test(fileName))
+          .map(fileName => path.basename(fileName));
+      });
   }
 
   function getFiles(folderName) {
