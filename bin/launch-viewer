@@ -12,6 +12,7 @@ if (!screenshotDirs) {
 }
 
 console.log(`Launching viewer on ${port}...`);
+
 viewerApi({
   port,
   screenshotDirs,

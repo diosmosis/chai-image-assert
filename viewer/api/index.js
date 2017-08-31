@@ -4,6 +4,7 @@ const Koa = require('koa');
 const koaStatic = require('koa-static');
 const koaRoute = require('koa-route');
 const koaBodyParser = require('koa-bodyparser');
+const mount = require('koa-mount');
 
 const TO_PROCESSED_DIRECTION = 'to-processed';
 const TO_EXPECTED_DIRECTION = 'to-expected';
@@ -18,16 +19,29 @@ module.exports = function (options) {
     throw new Error('The screenshotDirs options is required.');
   }
 
-  const viewerPath = path.join(__dirname, '..', 'dist', 'viewer');
+  const viewerPath = path.join(__dirname, '..', '..', 'dist', 'viewer');
 
   const app = new Koa();
   app.use(koaBodyParser());
   app.use(koaStatic(viewerPath));
+
   app.use(koaRoute.post('/copy', copyFile));
-  app.use(koaRoute.get('/files/processed', getFiles(processedFolderName));
-  app.use(koaRoute.get('/files/processed/:name'), getFile(processedFolderName));
-  app.use(koaRoute.get('/files/expected', getFiles(expectedFolderName)))
-  app.use(koaRoute.get('/files/expected/:name'), getFile(expectedFolderName));
+  app.use(koaRoute.get('/files/processed', getFiles(processedFolderName)));
+  app.use(koaRoute.get('/files/expected', getFiles(expectedFolderName)));
+
+  app.use(mount('/files/processed', serveScreenshots(processedFolderName)));
+  app.use(mount('/files/expected', serveScreenshots(expectedFolderName)));
+
+  return new Promise((resolve, reject) => {
+    app.listen(port, (err, result) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+
+      resolve(result);
+    });
+  });
 
   function copyFile(ctx) {
     const name = ctx.body.name;
@@ -76,15 +90,9 @@ module.exports = function (options) {
     };
   }
 
-  function getFile(folderName) {
-    return function (ctx) {
-      const filePath = path.join(screenshotDirs, folderName, ctx.params.name);
-      if (!fs.pathExistsSync(filePath)) {
-        throw new Error(`The path "${filePath}" does not exist!`);
-      }
-
-      ctx.set('Content-Type', 'image/png'); // assuming pngs
-      ctx.body = fs.createReadStream(filePath);
-    };
+  function serveScreenshots(folderName) {
+    const app = new Koa();
+    app.use(koaStatic(path.join(screenshotDirs, folderName)));
+    return app;
   }
 };
