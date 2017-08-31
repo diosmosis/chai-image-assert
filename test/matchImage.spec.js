@@ -1,7 +1,8 @@
-var fs = require('fs');
-var path = require('path');
-var chai = require('chai');
-var expect = chai.expect;
+import * as fs from 'fs';
+import * as path from 'path';
+import * as chai from 'chai';
+
+const expect = chai.expect;
 
 describe('matchImage', function () {
     var louise = fs.readFileSync(path.join(__dirname, 'expected-screenshots', 'louise.png')),
@@ -9,7 +10,7 @@ describe('matchImage', function () {
         gene = fs.readFileSync(path.join(__dirname, 'expected-screenshots', 'gene.png'));
 
     beforeEach(function () {
-        chai.use(require('../lib')(__dirname));
+        chai.use(require('..')(__dirname));
     });
 
     it("should successfully match an image against itself", function () {
@@ -27,11 +28,11 @@ describe('matchImage', function () {
     });
 
     it("should fail gracefully if the image magick exeuctable is not found", function () {
-        chai.use(require('../lib')(__dirname, 'garbagecompare'));
+        chai.use(require('..')(__dirname, 'garbagecompare'));
 
         expect(function () {
             expect(louise).to.matchImage('louise');
-        }).to.throw(Error, "the 'garbagecompare' command was not found, make sure imagemagick is available on your machine");
+        }).to.throw(Error, "the 'garbagecompare' command was not found, ('compare' is provided by imagemagick)");
     });
 
     it("should use a custom name for the processed screenshot if supplied", function () {

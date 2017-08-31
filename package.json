@@ -2,9 +2,11 @@
   "name": "chai-image-assert",
   "version": "1.1.2",
   "description": "Image comparison chai assert (uses ImageMagick).",
-  "main": "lib/index.js",
+  "main": "index.js",
   "scripts": {
-    "test": "mocha test/*.spec.js"
+    "test": "mocha --require babel-polyfill --compilers js:babel-register test/*.spec.js",
+    "build": "babel ./lib --out-dir dist",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -23,6 +25,11 @@
   },
   "homepage": "https://github.com/diosmosis/chai-image-assert#readme",
   "devDependencies": {
+    "babel": "^6.23.0",
+    "babel-cli": "^6.26.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.6.0",
+    "babel-register": "^6.26.0",
     "chai": "^3.5.0",
     "mocha": "^2.4.5"
   }
