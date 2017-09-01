@@ -35,6 +35,7 @@ export default class App extends Component {
 
     this.setState({
       comparisons: response.data,
+      currentComparison: response.data[0],
     });
   }
 
@@ -50,6 +51,8 @@ export default class App extends Component {
         name,
         direction,
       });
+
+      Materialize.toast('Done!', 3000, 'success-toast');
     } catch (e) {
       Materialize.toast('Copying failed!', 3000, 'error-toast');
       return;
@@ -81,10 +84,12 @@ export default class App extends Component {
           </div>
 
           <div className="col s9">
-            {this.state.currentComparison ? (<ComparisonView
-              comparisonId={this.state.currentComparison}
-              onCopyFile={this.onCopyFile}
-            />) : null}
+            {this.state.currentComparison
+              ? (<ComparisonView
+                comparisonId={this.state.currentComparison}
+                onCopyFile={this.onCopyFile}
+              />)
+              : (<h4>There are no failed comparisons.</h4>)}
           </div>
         </div>
       </div>

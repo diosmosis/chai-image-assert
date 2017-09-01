@@ -5,6 +5,7 @@ const koaStatic = require('koa-static');
 const koaRoute = require('koa-route');
 const koaBodyParser = require('koa-bodyparser');
 const mount = require('koa-mount');
+const _ = require('lodash');
 
 const TO_PROCESSED_DIRECTION = 'to-processed';
 const TO_EXPECTED_DIRECTION = 'to-expected';
@@ -34,23 +35,25 @@ module.exports = function (options) {
   app.use(mount('/files/expected', serveScreenshots(expectedFolderName)));
 
   return new Promise((resolve, reject) => {
-    app.listen(port, (err, result) => {
+    const server = app.listen(port, (err) => {
       if (err) {
         reject(err);
         return;
       }
 
-      resolve(result);
+      resolve(server);
     });
   });
 
   function copyFile(ctx) {
-    const name = ctx.body.name;
+    const name = ctx.request.body.name;
     if (!name) {
       ctx.throw(400, 'The "name" body parameter is required.');
     }
 
-    const direction = ctx.body.direction;
+    const fileName = name + '.png';
+
+    const direction = ctx.request.body.direction;
     if (!direction) {
       ctx.throw(400, 'The "direction" body parameter is required.');
     }
@@ -60,8 +63,18 @@ module.exports = function (options) {
       ctx.throw(400, `Invalid copy direction "${direction}."`);
     }
 
-    const expectedFile = path.join(screenshotDirs, expectedFolderName, name);
-    const processedFile = path.join(screenshotDirs, processedFolderName, name);
+    const expectedFolder = path.join(screenshotDirs, expectedFolderName);
+    if (!fs.pathExistsSync(expectedFolder)) {
+      fs.mkdirSync(expectedFolder);
+    }
+
+    const processedFolder = path.join(screenshotDirs, processedFolderName);
+    if (!fs.pathExistsSync(processedFolder)) {
+      fs.mkdirSync(processedFolder);
+    }
+
+    const expectedFile = path.join(expectedFolder, fileName);
+    const processedFile = path.join(processedFolder, fileName);
 
     let copyFrom;
     let copyTo;
@@ -77,19 +90,65 @@ module.exports = function (options) {
       ctx.throw(400, `The "${copyFrom}" file does not exist!`);
     }
 
-    fs.linkSync(copyFrom, copyTo);
+    fs.copySync(copyFrom, copyTo);
 
     ctx.status = 204;
   }
 
   function getComparisonList(ctx) {
-    return fs.readdir(path.join(screenshotDirs, processedFolderName))
-      .then(function (files) {
-        // TODO: don't know how to tell if a file is matched against an existing expected file.
-        ctx.body = files
-          .filter(fileName => /\.png$/.test(fileName))
-          .filter(fileName => !/\.diff\.png/.test(fileName))
-          .map(fileName => path.basename(fileName));
+    let files;
+
+    const processedDir = path.join(screenshotDirs, processedFolderName);
+    const missingFilesPath = path.join(processedDir, '_missing.list');
+    const fileStats = {};
+
+    return fs.readdir(processedDir)
+      .then(function (theFiles) {
+        files = theFiles
+          .filter(fileName => /\.diff\.png$/.test(fileName))
+          .map(fileName => path.basename(fileName, '.diff.png'));
+
+        if (!fs.pathExistsSync(missingFilesPath)) {
+          return '';
+        }
+
+        return fs.readFile(missingFilesPath);
+      }).then(function (contents) {
+        files.push(...contents.toString().split("\n").filter(line => !! line));
+        files = _.uniq(files);
+
+        return Promise.all(files.map(fileName => {
+          const filePath = path.join(processedDir, fileName + '.png');
+          if (!fs.pathExistsSync(filePath)) {
+            return null;
+          }
+
+          return fs.stat(filePath);
+        }));
+      }).then(function (fileStatsArray) {
+        fileStatsArray.forEach((stat, idx) => {
+          fileStats[files[idx]] = stat;
+        });
+
+        files.sort((lhs, rhs) => {
+          if (!fileStats[lhs]) {
+            return 1;
+          } else if (!fileStats[rhs]) {
+            return -1;
+          }
+
+          if (fileStats[lhs].mtime < fileStats[rhs].mtime) {
+            return -1;
+          }
+
+          if (fileStats[lhs].mtime > fileStats[rhs].mtime) {
+            return 1;
+          }
+
+          return 0;
+        });
+
+        ctx.body = files;
       });
   }
 

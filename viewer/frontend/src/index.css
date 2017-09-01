@@ -7,3 +7,7 @@ body {
 .error-toast {
   background-color: #F44336;
 }
+
+.success-toast {
+  background-color: #4CAF50;
+}

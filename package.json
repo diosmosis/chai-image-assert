@@ -7,13 +7,15 @@
     "chai-image-assert-viewer": "./bin/launch-viewer"
   },
   "scripts": {
-    "test": "mocha --require babel-polyfill --compilers js:babel-register test/*.spec.js",
+    "test": "mocha --require babel-polyfill --compilers js:babel-register test/unit/*.spec.js",
     "build": "rm -r dist && babel ./lib --out-dir dist && npm run viewer-build",
     "prepublish": "in-publish && npm run build",
     "viewer-start": "cd viewer/frontend && react-scripts start",
     "viewer-build": "mkdir -p ./dist && cd viewer/frontend && react-scripts build && mv ./build ../../dist/viewer",
     "viewer-test": "cd viewer/frontend && react-scripts test --env=jsdom",
-    "viewer-eject": "cd viewer/frontend && react-scripts eject"
+    "viewer-eject": "cd viewer/frontend && react-scripts eject",
+    "viewer-test-e2e": "wdio wdio.conf.js",
+    "viewer-launch-test": "rm -r ./test_resources/processed-screenshots && mkdir ./test_resources/processed-screenshots && cp ./test_resources/processed-screenshots-for-viewer/* ./test_resources/processed-screenshots && ./bin/launch-viewer ./test_resources"
   },
   "repository": {
     "type": "git",
@@ -44,7 +46,11 @@
     "mocha": "^2.4.5",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
-    "react-scripts": "1.0.12"
+    "react-scripts": "1.0.12",
+    "wdio-mocha-framework": "^0.5.11",
+    "wdio-screenshot": "^0.6.0",
+    "wdio-spec-reporter": "^0.1.2",
+    "webdriverio": "^4.8.0"
   },
   "dependencies": {
     "fs-extra": "^4.0.1",
@@ -53,6 +59,7 @@
     "koa-mount": "2",
     "koa-route": "^3.2.0",
     "koa-static": "3",
+    "lodash": "^4.17.4",
     "react-dev-utils": "^4.0.0"
   }
 }

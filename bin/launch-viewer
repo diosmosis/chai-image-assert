@@ -11,11 +11,23 @@ if (!screenshotDirs) {
   throw new Error('The first argument to the directory where screenshots are stored is required.');
 }
 
+if (argv.expected) {
+  console.log(`Using ${argv.expected} as expected folder name.`);
+}
+
+if (argv.processed) {
+  console.log(`Using ${argv.expected} as processed folder name.`);
+}
+
 console.log(`Launching viewer on ${port}...`);
 
-viewerApi({
+module.exports = viewerApi({
   port,
   screenshotDirs,
-}).then(function () {
+  expectedFolderName: argv.expected,
+  processedFolderName: argv.processed,
+}).then(function (server) {
   openBrowser(`http://localhost:${port}`);
+
+  return server;
 });

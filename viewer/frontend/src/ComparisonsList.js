@@ -10,7 +10,7 @@ export default function ComparisonList({ comparisons, selectedComparison, onSele
 
   function renderListEntry(comp) {
     return <a
-      className={'collection-item' + (selectedComparison ? ' active' : '')}
+      className={'comparison-link collection-item' + (selectedComparison === comp ? ' active' : '')}
       href=""
       key={comp}
       onClick={(e) => {
