@@ -1,0 +1,32 @@
+version: '3'
+services:
+  # yarn build must be run before running viewer tests
+  viewer:
+    image: node:6
+    working_dir: /usr/src/app
+    volumes:
+      - .:/usr/src/app
+    command: yarn viewer-launch-test
+    ports:
+      - 3000:3000
+  viewer_tests:
+    image: node:6
+    working_dir: /usr/src/app
+    volumes:
+      - .:/usr/src/app
+    entrypoint: /usr/src/app/test_resources/wait-for-it.sh viewer:3000 --
+    command: yarn viewer-test-e2e
+    links:
+      - viewer
+      - hub
+      - chrome
+
+  hub:
+    image: selenium/hub:3.4
+    ports:
+      - 4444:4444
+  chrome:
+    image: selenium/node-chrome
+    environment:
+      HUB_PORT_4444_TCP_ADDR: hub
+      HUB_PORT_4444_TCP_PORT: 4444

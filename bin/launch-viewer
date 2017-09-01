@@ -1,0 +1,33 @@
+#!/usr/bin/env node
+const path = require('path');
+const openBrowser = require('react-dev-utils/openBrowser');
+const viewerApi = require('../viewer/api');
+
+const argv = require('minimist')(process.argv.slice(2));
+const port = parseInt(argv.port) || 3000;
+
+const screenshotDirs = argv._[0];
+if (!screenshotDirs) {
+  throw new Error('The first argument to the directory where screenshots are stored is required.');
+}
+
+if (argv.expected) {
+  console.log(`Using ${argv.expected} as expected folder name.`);
+}
+
+if (argv.processed) {
+  console.log(`Using ${argv.expected} as processed folder name.`);
+}
+
+console.log(`Launching viewer on ${port}...`);
+
+module.exports = viewerApi({
+  port,
+  screenshotDirs,
+  expectedFolderName: argv.expected,
+  processedFolderName: argv.processed,
+}).then(function (server) {
+  openBrowser(`http://localhost:${port}`);
+
+  return server;
+});
