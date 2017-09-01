@@ -8,14 +8,14 @@
   },
   "scripts": {
     "test": "mocha --require babel-polyfill --compilers js:babel-register test/unit/*.spec.js",
-    "build": "rm -r dist && babel ./lib --out-dir dist && npm run viewer-build",
+    "build": "rm -rf dist && babel ./lib --out-dir dist && npm run viewer-build",
     "prepublish": "(in-publish && npm run build) || true",
     "viewer-start": "cd viewer/frontend && react-scripts start",
     "viewer-build": "mkdir -p ./dist && cd viewer/frontend && react-scripts build && mv ./build ../../dist/viewer",
     "viewer-test": "cd viewer/frontend && react-scripts test --env=jsdom",
     "viewer-eject": "cd viewer/frontend && react-scripts eject",
     "viewer-test-e2e": "wdio wdio.conf.js",
-    "viewer-launch-test": "rm -r ./test_resources/processed-screenshots && mkdir ./test_resources/processed-screenshots && cp ./test_resources/processed-screenshots-for-viewer/* ./test_resources/processed-screenshots && ./bin/launch-viewer ./test_resources"
+    "viewer-launch-test": "rm -rf ./test_resources/processed-screenshots && mkdir ./test_resources/processed-screenshots && cp ./test_resources/processed-screenshots-for-viewer/* ./test_resources/processed-screenshots && ./bin/launch-viewer ./test_resources"
   },
   "repository": {
     "type": "git",
