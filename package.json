@@ -9,7 +9,7 @@
   "scripts": {
     "test": "mocha --require babel-polyfill --compilers js:babel-register test/unit/*.spec.js",
     "build": "rm -r dist && babel ./lib --out-dir dist && npm run viewer-build",
-    "prepublish": "in-publish && npm run build",
+    "prepublish": "(in-publish && npm run build) || true",
     "viewer-start": "cd viewer/frontend && react-scripts start",
     "viewer-build": "mkdir -p ./dist && cd viewer/frontend && react-scripts build && mv ./build ../../dist/viewer",
     "viewer-test": "cd viewer/frontend && react-scripts test --env=jsdom",
